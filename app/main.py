@@ -24,6 +24,17 @@ def get_documents(skip: int = 0, limit: int = 10, db: Session = Depends(get_db))
     documents = db.query(models.Document).offset(skip).limit(limit).all()
     return documents
 
+@app.post("/documents/", response_model=schemas.Document, status_code=201)
+def create_document(document: schemas.DocumentCreate, db: Session = Depends(get_db)):
+    """
+    Create a new document.
+    """
+    db_document = models.Document(**document.dict())
+    db.add(db_document)
+    db.commit()
+    db.refresh(db_document)
+    return db_document
+
 @app.get("/health")
 def health_check():
     """
