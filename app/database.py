@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-SQLALCHEMY_DATABASE_URL = "postgresql://sourav.ganguly@localhost/doc_finder_db"
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
 URL = os.getenv("DATABASE_URL")
 print(URL)
 
