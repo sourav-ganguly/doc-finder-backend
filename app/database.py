@@ -10,10 +10,6 @@ SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
 if SQLALCHEMY_DATABASE_URL and SQLALCHEMY_DATABASE_URL.startswith("postgres://"):
     SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# Remove or comment out these lines as they're not needed
-# URL = os.getenv("DATABASE_URL")
-# print(URL)
-
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
