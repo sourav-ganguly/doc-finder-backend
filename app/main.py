@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 import os
 from dotenv import load_dotenv
+import uvicorn
 
 from . import models, schemas
 from .database import engine, get_db
@@ -40,4 +41,8 @@ def health_check():
     """
     Health check endpoint
     """
-    return {"status": "healthy"} 
+    return {"status": "healthy"}
+
+if __name__ == "__main__":
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True) 
