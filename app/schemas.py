@@ -15,4 +15,19 @@ class Document(DocumentBase):
     updated_at: Optional[datetime] = None
 
     class Config:
-        from_attributes = True 
+        from_attributes = True
+
+class DoctorBase(BaseModel):
+    name: str
+    speciality: str
+    phone_number: str
+    location: str
+
+class DoctorCreate(DoctorBase):
+    pass
+
+class Doctor(DoctorBase):
+    id: int
+
+    class Config:
+        orm_mode = True 
