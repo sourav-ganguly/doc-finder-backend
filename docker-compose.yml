@@ -4,14 +4,14 @@ services:
   db:
     image: postgres:13
     environment:
-      POSTGRES_DB: doc_finder_db 
+      POSTGRES_DB: doc_finder_db
       POSTGRES_PASSWORD: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   web:
     build: .
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    command: uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
     volumes:
       - .:/app
     ports:
