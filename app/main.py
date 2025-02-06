@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 import os
 from dotenv import load_dotenv
 import uvicorn
@@ -37,11 +37,22 @@ def create_document(document: schemas.DocumentCreate, db: Session = Depends(get_
     return db_document
 
 @app.get("/doctors/", response_model=List[schemas.Doctor])
-def get_doctors(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+def get_doctors(
+    skip: int = 0, 
+    limit: int = 10, 
+    location: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
     """
     Retrieve a list of doctors with pagination support.
+    Optional location parameter to filter doctors by location.
     """
-    doctors = db.query(models.Doctor).offset(skip).limit(limit).all()
+    query = db.query(models.Doctor)
+    
+    if location:
+        query = query.filter(models.Doctor.location.ilike(f"%{location}%"))
+    
+    doctors = query.offset(skip).limit(limit).all()
     return doctors
 
 @app.post("/doctors/", response_model=schemas.Doctor, status_code=201) 
