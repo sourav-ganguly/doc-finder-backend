@@ -9,6 +9,9 @@ from . import models, schemas
 from .database import engine, get_db
 
 load_dotenv()
+
+# Drop and recreate only the doctors table
+models.Doctor.__table__.drop(engine, checkfirst=True)
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(

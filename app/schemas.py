@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 class DocumentBase(BaseModel):
     title: str
@@ -20,14 +20,18 @@ class Document(DocumentBase):
 class DoctorBase(BaseModel):
     name: str
     speciality: str
-    phone_number: str
+    phone_number: Optional[str] = None
     location: str
+    educational_degree: Optional[str] = None
+    description: Optional[str] = None
+    data_source: Optional[str] = None
 
 class DoctorCreate(DoctorBase):
-    pass
+    data_scrapped_at: Optional[datetime] = None
 
 class Doctor(DoctorBase):
     id: int
+    data_scrapped_at: datetime
 
     class Config:
-        orm_mode = True 
+        from_attributes = True 

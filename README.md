@@ -96,60 +96,19 @@ To run the application using Docker:
 
 1. Make sure you have Docker installed on your machine.
 
-2. Create a `docker-compose.yml` file in the project root with the following content:
-
-   ```yaml
-   version: '3'
-   
-   services:
-     db:
-       image: postgres:13
-       environment:
-         POSTGRES_DB: doc_finder_db
-         POSTGRES_PASSWORD: postgres
-       volumes:
-         - postgres_data:/var/lib/postgresql/data
-   
-     web:
-       build: .
-       command: uvicorn app.main:app --host 0.0.0.0 --port 8000
-       volumes:
-         - .:/app
-       ports:
-         - "8000:8000"
-       depends_on:
-         - db
-       environment:
-         DATABASE_URL: postgresql://postgres:postgres@db:5432/doc_finder_db
-   
-   volumes:
-     postgres_data:
-   ```
-
-   This defines two services:
-   - `db`: A PostgreSQL database container
-   - `web`: The FastAPI application container, which depends on the `db` service
-
-3. Update your FastAPI code to use the `DATABASE_URL` environment variable for connecting to the database. For example, in `app/database.py`:
-
-   ```python
-   DATABASE_URL = os.getenv("DATABASE_URL")
-   engine = create_engine(DATABASE_URL)
-   ```
-
-4. Build and start the containers:
+2. Build and start the containers:
 
    ```bash
-   docker-compose up --build
+   docker compose up --build
    ```
 
    This will start the FastAPI application and a PostgreSQL database in separate Docker containers, with the FastAPI container able to access the database using the service name `db` as the hostname.
 
-5. The API will be accessible at `http://localhost:8000`
+3. The API will be accessible at `http://localhost:8000`
 
 Alternatively, you can use Docker Compose to run the full stack, including the FastAPI service and a PostgreSQL database. See the `docker-compose.yml` file for the configuration.
 
 To start the stack with Docker Compose:
 ```bash
-docker-compose up
+docker compose up
 ``` 
