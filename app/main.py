@@ -43,17 +43,25 @@ def create_document(document: schemas.DocumentCreate, db: Session = Depends(get_
 def get_doctors(
     skip: int = 0, 
     limit: int = 10, 
-    location: Optional[str] = None,
+    search: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
     """
     Retrieve a list of doctors with pagination support.
-    Optional location parameter to filter doctors by location.
+    Optional search parameter to filter doctors by name, specialty, location, or educational degree.
     """
     query = db.query(models.Doctor)
     
-    if location:
-        query = query.filter(models.Doctor.location.ilike(f"%{location}%"))
+    if search:
+        # Convert search term to lowercase for case-insensitive search
+        search = f"%{search.lower()}%"
+        query = query.filter(
+            # Using or_ to match any of the conditions
+            models.Doctor.name.ilike(search) |
+            models.Doctor.speciality.ilike(search) |
+            models.Doctor.location.ilike(search) |
+            models.Doctor.educational_degree.ilike(search)
+        )
     
     doctors = query.offset(skip).limit(limit).all()
     return doctors
