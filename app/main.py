@@ -4,6 +4,8 @@ from typing import List, Optional
 import os
 from dotenv import load_dotenv
 import uvicorn
+import json
+from datetime import datetime
 
 from . import models, schemas
 from .database import engine, get_db
@@ -75,6 +77,56 @@ def health_check():
     Health check endpoint
     """
     return {"status": "healthy"}
+
+@app.post("/admin/import-doctors")
+def import_doctors(db: Session = Depends(get_db)):
+    """
+    Import doctors from the JSON file if they don't already exist in the database.
+    """
+    try:
+        # Read the JSON file
+        with open("doctor_data/doctor-list-square-v2.json", "r") as f:
+            doctors_data = json.load(f)
+
+        imported_count = 0
+        skipped_count = 0
+
+        for doctor in doctors_data:
+            # Check if doctor already exists by name and speciality
+            existing_doctor = db.query(models.Doctor).filter(
+                models.Doctor.name == doctor["name"],
+                models.Doctor.speciality == doctor["specialty"]
+            ).first()
+
+            if existing_doctor:
+                skipped_count += 1
+                continue
+
+            # Create new doctor object
+            new_doctor = models.Doctor(
+                name=doctor["name"],
+                speciality=doctor["specialty"],
+                educational_degree=doctor.get("educationalDegree"),
+                description=doctor.get("description"),
+                location=doctor.get("location"),
+                data_source=doctor.get("dataSource"),
+                data_scrapped_at=datetime.strptime(doctor["dataScrappedAt"], "%Y-%m-%d") if doctor.get("dataScrappedAt") else None
+            )
+
+            db.add(new_doctor)
+            imported_count += 1
+
+        db.commit()
+
+        return {
+            "message": "Import completed successfully",
+            "imported": imported_count,
+            "skipped": skipped_count
+        }
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))
