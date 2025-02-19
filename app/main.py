@@ -7,9 +7,11 @@ from dotenv import load_dotenv
 import uvicorn
 import json
 from datetime import datetime
+from sqlalchemy import or_
 
 from . import models, schemas
 from .database import engine, get_db
+from .symptoms_matcher import match_specialization
 
 load_dotenv()
 
@@ -49,29 +51,41 @@ def create_document(document: schemas.DocumentCreate, db: Session = Depends(get_
     db.refresh(db_document)
     return db_document
 
+@app.get("/get-speciality")
+def get_speciality(symptoms: str):
+    """
+    Get medical specializations based on symptoms
+    """
+    try:
+        specializations = match_specialization(symptoms)
+        return {"specializations": specializations}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/doctors/", response_model=List[schemas.Doctor])
 def get_doctors(
     skip: int = 0, 
-    limit: int = 10, 
+    limit: int = 100, 
     search: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
     """
     Retrieve a list of doctors with pagination support.
     Optional search parameter to filter doctors by name, specialty, location, or educational degree.
+    Optional symptoms parameter to filter doctors by matching specializations.
     """
     query = db.query(models.Doctor)
     
     if search:
-        # Convert search term to lowercase for case-insensitive search
-        search = f"%{search.lower()}%"
-        query = query.filter(
-            # Using or_ to match any of the conditions
-            models.Doctor.name.ilike(search) |
-            models.Doctor.speciality.ilike(search) |
-            models.Doctor.location.ilike(search) |
-            models.Doctor.educational_degree.ilike(search)
-        )
+        # Get specializations from symptoms
+        specializations = match_specialization(search).split(';')
+        # Clean up any whitespace
+        specializations = [spec.strip() for spec in specializations]
+        
+        # Create a filter for each specialization
+        specialty_filters = [models.Doctor.speciality.ilike(f"%{spec}%") for spec in specializations]
+        query = query.filter(or_(*specialty_filters))
+    
     
     doctors = query.offset(skip).limit(limit).all()
     return doctors
