@@ -74,7 +74,7 @@ def match_specialization(symptoms):
 
         # Call OpenAI API
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are a medical expert assistant that recommends appropriate medical specializations based on symptoms."},
                 {"role": "user", "content": prompt}
