@@ -25,6 +25,8 @@ class DoctorBase(BaseModel):
     educational_degree: Optional[str] = None
     description: Optional[str] = None
     data_source: Optional[str] = None
+    clinics: Optional[List[str]] = None
+    chambers: Optional[List[str]] = None
 
 class DoctorCreate(DoctorBase):
     data_scrapped_at: Optional[datetime] = None

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, ARRAY
 from sqlalchemy.sql import func
 from .database import Base
 
@@ -22,4 +22,6 @@ class Doctor(Base):
     educational_degree = Column(String)
     description = Column(String)
     data_scrapped_at = Column(DateTime)
-    data_source = Column(String) 
+    data_source = Column(String)
+    clinics = Column(ARRAY(String))
+    chambers = Column(ARRAY(String)) 

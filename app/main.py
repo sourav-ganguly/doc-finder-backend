@@ -32,25 +32,6 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-@app.get("/documents/", response_model=List[schemas.Document])
-def get_documents(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    """
-    Retrieve a list of documents with pagination support.
-    """
-    documents = db.query(models.Document).offset(skip).limit(limit).all()
-    return documents
-
-@app.post("/documents/", response_model=schemas.Document, status_code=201)
-def create_document(document: schemas.DocumentCreate, db: Session = Depends(get_db)):
-    """
-    Create a new document.
-    """
-    db_document = models.Document(**document.dict())
-    db.add(db_document)
-    db.commit()
-    db.refresh(db_document)
-    return db_document
-
 @app.get("/get-speciality")
 def get_speciality(symptoms: str):
     """
@@ -111,7 +92,7 @@ def health_check():
 @app.post("/admin/import-doctors")
 def import_doctors(db: Session = Depends(get_db)):
     """
-    Import doctors from the JSON file if they don't already exist in the database.
+    Import doctors from the JSON file. If a doctor already exists, replace with new data.
     """
     try:
         # Read the JSON file
@@ -119,7 +100,7 @@ def import_doctors(db: Session = Depends(get_db)):
             doctors_data = json.load(f)
 
         imported_count = 0
-        skipped_count = 0
+        updated_count = 0
 
         for doctor in doctors_data:
             # Check if doctor already exists by name and speciality
@@ -129,33 +110,65 @@ def import_doctors(db: Session = Depends(get_db)):
             ).first()
 
             if existing_doctor:
-                skipped_count += 1
-                continue
-
-            # Create new doctor object
-            new_doctor = models.Doctor(
-                name=doctor["name"],
-                speciality=doctor["specialty"],
-                educational_degree=doctor.get("educationalDegree"),
-                description=doctor.get("description"),
-                location=doctor.get("location"),
-                data_source=doctor.get("dataSource"),
-                data_scrapped_at=datetime.strptime(doctor["dataScrappedAt"], "%Y-%m-%d") if doctor.get("dataScrappedAt") else None
-            )
-
-            db.add(new_doctor)
-            imported_count += 1
+                # Update existing doctor with new data
+                existing_doctor.educational_degree = doctor.get("educationalDegree")
+                existing_doctor.description = doctor.get("description")
+                existing_doctor.location = doctor.get("location")
+                existing_doctor.data_source = doctor.get("dataSource")
+                existing_doctor.data_scrapped_at = datetime.strptime(doctor["dataScrappedAt"], "%Y-%m-%d") if doctor.get("dataScrappedAt") else None
+                existing_doctor.clinics = doctor.get("clinics", [])
+                existing_doctor.chambers = doctor.get("chambers", [])
+                updated_count += 1
+            else:
+                # Create new doctor object
+                new_doctor = models.Doctor(
+                    name=doctor["name"],
+                    speciality=doctor["specialty"],
+                    educational_degree=doctor.get("educationalDegree"),
+                    description=doctor.get("description"),
+                    location=doctor.get("location"),
+                    data_source=doctor.get("dataSource"),
+                    data_scrapped_at=datetime.strptime(doctor["dataScrappedAt"], "%Y-%m-%d") if doctor.get("dataScrappedAt") else None,
+                    clinics=doctor.get("clinics", []),
+                    chambers=doctor.get("chambers", [])
+                )
+                db.add(new_doctor)
+                imported_count += 1
 
         db.commit()
 
         return {
             "message": "Import completed successfully",
             "imported": imported_count,
-            "skipped": skipped_count
+            "updated": updated_count
         }
 
     except Exception as e:
         db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/admin/reset-database")
+def reset_database(db: Session = Depends(get_db)):
+    """
+    WARNING: This will delete all data and recreate the tables.
+    Should only be used in development/testing.
+    """
+    if os.getenv("ENVIRONMENT", "production").lower() == "production":
+        raise HTTPException(
+            status_code=403,
+            detail="Database reset not allowed in production environment"
+        )
+    
+    try:
+        # Close all existing connections
+        db.close()
+        
+        # Drop and recreate all tables
+        models.Base.metadata.drop_all(bind=engine)
+        models.Base.metadata.create_all(bind=engine)
+        
+        return {"message": "Database reset successfully"}
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
