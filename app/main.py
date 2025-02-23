@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 import uvicorn
 import json
 from datetime import datetime
-from sqlalchemy import or_
-
+from sqlalchemy import or_, func
+import random
 from . import models, schemas
 from .database import engine, get_db
 from .symptoms_matcher import match_specialization
@@ -51,7 +51,7 @@ def get_doctors(
     db: Session = Depends(get_db)
 ):
     """
-    Retrieve a list of doctors with pagination support.
+    Retrieve a randomized list of doctors with pagination support.
     Optional search parameter to filter doctors by name, specialty, location, or educational degree.
     Optional symptoms parameter to filter doctors by matching specializations.
     """
@@ -67,6 +67,8 @@ def get_doctors(
         specialty_filters = [models.Doctor.speciality.ilike(f"%{spec}%") for spec in specializations]
         query = query.filter(or_(*specialty_filters))
     
+    # Add random ordering
+    query = query.order_by(func.random())
     
     doctors = query.offset(skip).limit(limit).all()
     return doctors
