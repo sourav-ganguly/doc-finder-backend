@@ -19,6 +19,7 @@ class Document(DocumentBase):
 
 class DoctorBase(BaseModel):
     name: str
+    title: Optional[str] = None
     speciality: str
     phone_number: Optional[str] = None
     location: str

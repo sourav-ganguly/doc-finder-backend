@@ -96,7 +96,7 @@ def import_doctors(db: Session = Depends(get_db)):
     """
     try:
         # Read the JSON file
-        with open("doctor_data/doctor-list-square-v2.json", "r") as f:
+        with open("doctor_data/merged_doctors_list_v2.json", "r") as f:
             doctors_data = json.load(f)
 
         imported_count = 0
@@ -111,6 +111,7 @@ def import_doctors(db: Session = Depends(get_db)):
 
             if existing_doctor:
                 # Update existing doctor with new data
+                existing_doctor.title = doctor.get("title")
                 existing_doctor.educational_degree = doctor.get("educationalDegree")
                 existing_doctor.description = doctor.get("description")
                 existing_doctor.location = doctor.get("location")
@@ -123,6 +124,7 @@ def import_doctors(db: Session = Depends(get_db)):
                 # Create new doctor object
                 new_doctor = models.Doctor(
                     name=doctor["name"],
+                    title=doctor.get("title"),
                     speciality=doctor["specialty"],
                     educational_degree=doctor.get("educationalDegree"),
                     description=doctor.get("description"),

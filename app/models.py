@@ -16,6 +16,7 @@ class Doctor(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
+    title = Column(String)
     speciality = Column(String, index=True)
     phone_number = Column(String)
     location = Column(String)
