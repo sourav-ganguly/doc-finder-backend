@@ -73,6 +73,7 @@ def get_doctors(
     doctors = query.offset(skip).limit(limit).all()
     return doctors
 
+# FIXME: Fix bug after adding a doctor get API breaks
 @app.post("/doctors/", response_model=schemas.Doctor, status_code=201) 
 def create_doctor(doctor: schemas.DoctorCreate, db: Session = Depends(get_db)):
     """

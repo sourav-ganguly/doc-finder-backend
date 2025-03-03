@@ -3,11 +3,9 @@ import openai
 import logging
 from difflib import get_close_matches
 
-# Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-# Initialize OpenAI client
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 speciality_list = [
@@ -110,7 +108,7 @@ def match_specialization(symptoms):
         If multiple specializations are equally relevant, list them in order of priority, separated by semicolons.
         Do not include any explanations or additional text. Only use specializations from the provided list."""
 
-        # Call OpenAI API
+        
         response = openai.ChatCompletion.create(
             model="gpt-4o-mini",
             messages=[
@@ -121,10 +119,8 @@ def match_specialization(symptoms):
             max_tokens=100
         )
 
-        # Extract and clean the response
         suggested_specialties = response.choices[0].message['content'].strip().split(';')
         
-        # Validate and match each specialty against our list
         validated_specialties = []
         for specialty in suggested_specialties:
             specialty = specialty.strip()
@@ -135,8 +131,10 @@ def match_specialization(symptoms):
                 if closest_match:
                     validated_specialties.append(closest_match)
         
-        # If no valid specialties found, return Internal Medicine as default
+        logger.debug(f"Validated specialties: {validated_specialties}")
+        
         if not validated_specialties:
+            logger.debug("No valid specialties found, returning Internal Medicine")
             return "Internal Medicine"
             
         return ";".join(validated_specialties)
