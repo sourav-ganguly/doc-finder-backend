@@ -1,0 +1,23 @@
+{
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true,
+    "python.linting.pylintArgs": [
+        "--rcfile=.pylintrc"
+    ],
+    // Ruff configuration
+    "editor.formatOnSave": true,
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": false,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports.ruff": true,
+            "source.fixAll.ruff": true
+        }
+    },
+    "ruff.lint.run": "onType",
+    "ruff.showNotifications": "always",
+    "ruff.trace.server": "verbose",
+    "ruff.format.args": [
+        "--verbose"
+    ]
+}

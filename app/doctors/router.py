@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
 from typing import List, Optional
 
-from . import schemas, service
-from ..database import get_db
-from ..symptoms_matcher import match_specialization
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
+from app.database import get_db
+from app.doctors import schemas, service
+from app.symptoms_matcher import match_specialization
 
 router = APIRouter()
 

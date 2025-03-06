@@ -1,12 +1,13 @@
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
-from fastapi import HTTPException, status
+import os
 from datetime import datetime, timedelta
 from typing import Optional
-from jose import JWTError, jwt
-import os
-from passlib.context import CryptContext
+
 from dotenv import load_dotenv
+from fastapi import HTTPException
+from jose import jwt
+from passlib.context import CryptContext
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 
 from . import models, schemas
 
@@ -15,7 +16,7 @@ load_dotenv()
 # Security settings
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
 
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -50,31 +51,31 @@ def create_user(db: Session, user: schemas.UserCreate):
                 status_code=400,
                 detail="Email already registered"
             )
-        
+
         # Check if user with same username already exists
         if get_user_by_username(db, user.username):
             raise HTTPException(
                 status_code=400,
                 detail="Username already taken"
             )
-        
+
         # Create new user
         hashed_password = get_password_hash(user.password)
         db_user = models.User(
-            email=user.email, 
-            username=user.username, 
+            email=user.email,
+            username=user.username,
             hashed_password=hashed_password
         )
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
         return db_user
-    except IntegrityError:
+    except IntegrityError as exc:
         db.rollback()
         raise HTTPException(
-            status_code=400, 
+            status_code=400,
             detail="User already exists"
-        )
+        ) from exc
 
 
 def authenticate_user(db: Session, email: str, password: str):
@@ -96,4 +97,4 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
         expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt 
+    return encoded_jwt

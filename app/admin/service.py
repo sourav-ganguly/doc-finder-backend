@@ -1,9 +1,10 @@
-from sqlalchemy.orm import Session
 import os
-from fastapi import HTTPException
 
-from ..database import engine, Base
-from ..doctors import service as doctors_service
+from fastapi import HTTPException
+from sqlalchemy.orm import Session
+
+from app.database import Base, engine
+from app.doctors import service as doctors_service
 
 
 def verify_admin_password(password: str):
@@ -22,13 +23,13 @@ def verify_admin_password(password: str):
             status_code=500,
             detail="Admin password not configured in environment variables"
         )
-    
+
     if password != admin_password:
         raise HTTPException(
             status_code=401,
             detail="Invalid admin password"
         )
-    
+
     return True
 
 
@@ -57,7 +58,7 @@ def import_doctors_from_file(db: Session, file_path: str, admin_password: str):
             **result
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 def reset_database_tables(db: Session, admin_password: str):
@@ -73,22 +74,22 @@ def reset_database_tables(db: Session, admin_password: str):
     """
     # Verify admin password
     verify_admin_password(admin_password)
-    
+
     # Check environment to prevent accidental reset in production
     if os.getenv("ENVIRONMENT", "production").lower() == "production":
         raise HTTPException(
             status_code=403,
             detail="Database reset not allowed in production environment"
         )
-    
+
     try:
         # Close the current session
         db.close()
-        
+
         # Drop and recreate all tables
         Base.metadata.drop_all(bind=engine)
         Base.metadata.create_all(bind=engine)
-        
+
         return {"message": "Database reset successfully"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) 
+        raise HTTPException(status_code=500, detail=str(e)) from e

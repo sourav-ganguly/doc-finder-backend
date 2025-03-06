@@ -1,7 +1,8 @@
-import os
-import openai
 import logging
+import os
 from difflib import get_close_matches
+
+import openai
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)

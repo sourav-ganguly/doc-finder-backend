@@ -1,0 +1,1 @@
+# Auth module for Doc Finder API 

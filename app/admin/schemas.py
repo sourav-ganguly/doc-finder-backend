@@ -8,9 +8,7 @@ class AdminAuth(BaseModel):
 
 class ImportDoctorsRequest(AdminAuth):
     """Request schema for importing doctors."""
-    pass
 
 
 class ResetDatabaseRequest(AdminAuth):
     """Request schema for resetting database."""
-    pass 

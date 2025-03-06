@@ -1,15 +1,14 @@
+import os
+
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import os
-from dotenv import load_dotenv
 
-from .doctors.router import router as doctors_router
-from .ai.router import router as ai_router
 from .admin.router import router as admin_router
+from .ai.router import router as ai_router
 from .auth.router import router as auth_router
-from .database import Base
-from .auth.models import User
-from .database import engine
+from .database import Base, engine
+from .doctors.router import router as doctors_router
 
 load_dotenv()
 

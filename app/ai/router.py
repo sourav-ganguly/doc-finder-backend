@@ -21,4 +21,4 @@ def get_matching_specialization(request: SpecializationRequest):
         specializations = [spec.strip() for spec in specialization_str.split(';')]
         return {"specializations": specializations}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error matching specialization: {str(e)}") 
+        raise HTTPException(status_code=500, detail=f"Error matching specialization: {str(e)}") from e

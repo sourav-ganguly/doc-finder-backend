@@ -23,4 +23,4 @@ def match_specialization(query: str) -> str:
     elif any(kw in query for kw in ["eye", "vision"]):
         return "Ophthalmology"
     else:
-        return "General Medicine" 
+        return "General Medicine"

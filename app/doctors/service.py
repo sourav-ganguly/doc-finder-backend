@@ -1,10 +1,12 @@
-from datetime import datetime
-from sqlalchemy.orm import Session
-from sqlalchemy import or_, func
-from typing import List, Optional
 import json
+from datetime import datetime
+from typing import List, Optional
+
+from sqlalchemy import func, or_
+from sqlalchemy.orm import Session
 
 from . import models, schemas
+
 
 def get_doctors(
     db: Session,
@@ -48,10 +50,9 @@ def import_doctors(db: Session, file_path: str) -> dict:
             # Update existing doctor
             for key, value in doctor.items():
                 if key == "specialty":
-                    setattr(existing_doctor, "speciality", value)
+                    existing_doctor.speciality = value
                 elif key == "dataScrappedAt":
-                    setattr(existing_doctor, "data_scrapped_at", 
-                           datetime.strptime(value, "%Y-%m-%d") if value else None)
+                    existing_doctor.data_scrapped_at = datetime.strptime(value, "%Y-%m-%d") if value else None
                 else:
                     setattr(existing_doctor, key, value)
             updated_count += 1
