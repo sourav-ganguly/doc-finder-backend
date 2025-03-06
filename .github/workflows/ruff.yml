@@ -26,8 +26,8 @@ jobs:
       
       - name: Lint with Ruff
         run: |
-          # Run Ruff linter
-          ruff check .
+          # Run Ruff linter with detailed output
+          ruff check . --output-format=github
           
       - name: Format with Ruff
         run: |
