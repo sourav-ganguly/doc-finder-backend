@@ -16,7 +16,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     """
     Register a new user.
-    
+
     - **email**: Valid email address (must be unique)
     - **username**: Unique username
     - **password**: Password for authentication
@@ -26,12 +26,11 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=schemas.Token)
 def login_for_access_token(
-    form_data: OAuth2PasswordRequestForm = Depends(),
-    db: Session = Depends(get_db)
+    form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):
     """
     OAuth2 compatible token login, get an access token for future requests.
-    
+
     - **username**: Email address used for authentication
     - **password**: Password for authentication
     """

@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 class AdminAuth(BaseModel):
     """Schema for admin authentication."""
+
     admin_password: str
 
 

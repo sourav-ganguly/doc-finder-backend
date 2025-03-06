@@ -17,7 +17,7 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(
     title="Doc Finder API",
     description="Backend API for Doc Finder Mobile App",
-    version=os.getenv("API_VERSION", "v1")
+    version=os.getenv("API_VERSION", "v1"),
 )
 
 app.add_middleware(
@@ -33,12 +33,15 @@ app.include_router(ai_router, prefix="/ai", tags=["ai"])
 app.include_router(admin_router, prefix="/admin", tags=["admin"])
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
 
+
 @app.get("/health")
 def health_check():
     """Health check endpoint"""
     return {"status": "healthy"}
 
+
 if __name__ == "__main__":
     import uvicorn
+
     port = int(os.getenv("PORT", 8000))
-    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True) 
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)

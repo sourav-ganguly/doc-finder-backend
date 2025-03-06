@@ -16,8 +16,10 @@ class DoctorBase(BaseModel):
     clinics: Optional[List[str]] = []
     chambers: Optional[List[str]] = []
 
+
 class DoctorCreate(DoctorBase):
     pass
+
 
 class Doctor(DoctorBase):
     id: int

@@ -1,1 +1,1 @@
-# Auth module for Doc Finder API 
+# Auth module for Doc Finder API
