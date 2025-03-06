@@ -1,48 +1,39 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-import os
 
-from ..database import get_db, engine
-from ..doctors.models import Base
-from ..doctors import service as doctors_service
+from ..database import get_db
+from . import service, schemas
 
 router = APIRouter()
 
 @router.post("/import-doctors")
-def import_doctors(db: Session = Depends(get_db)):
-    """Import doctors from the JSON file."""
-    try:
-        result = doctors_service.import_doctors(
-            db=db,
-            file_path="doctor_data/merged_doctors_list_v2.json"
-        )
-        return {
-            "message": "Import completed successfully",
-            **result
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+def import_doctors(
+    request: schemas.ImportDoctorsRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Import doctors from the JSON file.
+    
+    Requires admin password for authentication.
+    """
+    return service.import_doctors_from_file(
+        db=db,
+        file_path="doctor_data/merged_doctors_list_v2.json",
+        admin_password=request.admin_password
+    )
 
 @router.post("/reset-database")
-def reset_database(db: Session = Depends(get_db)):
+def reset_database(
+    request: schemas.ResetDatabaseRequest,
+    db: Session = Depends(get_db)
+):
     """
     WARNING: This will delete all data and recreate the tables.
     Should only be used in development/testing.
-    """
-    if os.getenv("ENVIRONMENT", "production").lower() == "production":
-        raise HTTPException(
-            status_code=403,
-            detail="Database reset not allowed in production environment"
-        )
     
-    try:
-        # Close all existing connections
-        db.close()
-        
-        # Drop and recreate all tables
-        Base.metadata.drop_all(bind=engine)
-        Base.metadata.create_all(bind=engine)
-        
-        return {"message": "Database reset successfully"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) 
+    Requires admin password for authentication.
+    """
+    return service.reset_database_tables(
+        db=db,
+        admin_password=request.admin_password
+    ) 

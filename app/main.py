@@ -7,13 +7,12 @@ from .doctors.router import router as doctors_router
 from .ai.router import router as ai_router
 from .admin.router import router as admin_router
 from .auth.router import router as auth_router
-from .doctors.models import Base
+from .database import Base
 from .auth.models import User
 from .database import engine
 
 load_dotenv()
 
-# Create database tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -22,7 +21,6 @@ app = FastAPI(
     version=os.getenv("API_VERSION", "v1")
 )
 
-# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -31,7 +29,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers
 app.include_router(doctors_router, prefix="/doctors", tags=["doctors"])
 app.include_router(ai_router, prefix="/ai", tags=["ai"])
 app.include_router(admin_router, prefix="/admin", tags=["admin"])
