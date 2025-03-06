@@ -46,4 +46,49 @@ def login_for_access_token(
     access_token = service.create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"} 
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+@router.get("/test-linter-errors")
+def test_linter_errors(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """
+    An API endpoint with intentional linter errors for testing purposes.
+    
+    - **skip**: Number of records to skip
+    - **limit**: Maximum number of records to return
+    """
+    # Unused import (linter error)
+    
+    # Undefined variable (linter error)
+    result = undefined_variable + 10
+    
+    # Unused variable (linter error)
+    unused_var = "This variable is never used"
+    
+    # Missing whitespace around operator (linter error)
+    x=10+20
+    
+    # Line too long (linter error)
+    very_long_string = "This is an extremely long string that will definitely exceed the recommended line length limit for Python code according to PEP 8 style guidelines and should trigger a linter warning"
+    
+    # Multiple statements on one line (linter error)
+    a = 1; b = 2; c = 3
+    
+    # Comparison to None with == (linter error)
+    if x == None:
+        pass
+        
+    # Mutable default argument (linter error)
+    def function_with_mutable_default(arg=[]):
+        return arg
+    
+    # Inconsistent indentation (linter error - but fixing the syntax error)
+    if True:
+        y = 1
+        z = 2  # Fixed indentation to avoid syntax error
+    
+    # Trailing whitespace (linter error)
+    trailing_space = "This line has trailing spaces"    
+    
+    # Return statement with unnecessary parentheses (linter error)
+    return ({"message": "Test endpoint with linter errors", "data": []}) 
