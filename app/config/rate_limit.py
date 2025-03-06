@@ -1,23 +1,12 @@
+import os
+
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
 # Default rate limits
-DEFAULT_RATE_LIMIT = "60/minute"
-AUTH_RATE_LIMIT = "120/minute"
-AI_RATE_LIMIT = "10/minute"
+DEFAULT_RATE_LIMIT = os.getenv("DEFAULT_RATE_LIMIT", "20/minute")
+AUTH_RATE_LIMIT = os.getenv("AUTH_RATE_LIMIT", "10/minute")
+AI_RATE_LIMIT = os.getenv("AI_RATE_LIMIT", "10/minute")
 
-# Initialize limiter with empty config to avoid looking for .env file in vercel deployment
-limiter = Limiter(key_func=get_remote_address, config_filename=".limitter_env")
-
-# REDIS_URL = os.getenv("REDIS_URL")
-# if REDIS_URL:
-#     print("Redis URL found")
-#     # from slowapi.storage import RedisStorage
-
-#     # storage = RedisStorage(REDIS_URL)
-#     # limiter = Limiter(
-#     #     key_func=get_remote_address, storage_uri=REDIS_URL, storage=storage
-#     # )
-# else:
-#     # Use in-memory storage if Redis is not available
-#     limiter = Limiter(key_func=get_remote_address)
+# Initialize limiter with dummy config file to avoid looking for .env file in vercel deployment
+limiter = Limiter(key_func=get_remote_address, config_filename="limitter.env")
