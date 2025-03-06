@@ -9,12 +9,13 @@ from app.symptoms_matcher import match_specialization
 
 router = APIRouter()
 
+
 @router.get("/", response_model=List[schemas.Doctor])
 def get_doctors(
     skip: int = 0,
     limit: int = 100,
     search: Optional[str] = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """
     Retrieve a randomized list of doctors with pagination support.
@@ -23,22 +24,16 @@ def get_doctors(
     specializations = None
     if search:
         specializations = [
-            spec.strip() 
-            for spec in match_specialization(search).split(';')
+            spec.strip() for spec in match_specialization(search).split(";")
         ]
-    
+
     doctors = service.get_doctors(
-        db=db,
-        skip=skip,
-        limit=limit,
-        specializations=specializations
+        db=db, skip=skip, limit=limit, specializations=specializations
     )
     return doctors
 
+
 @router.post("/", response_model=schemas.Doctor, status_code=201)
-def create_doctor(
-    doctor: schemas.DoctorCreate,
-    db: Session = Depends(get_db)
-):
+def create_doctor(doctor: schemas.DoctorCreate, db: Session = Depends(get_db)):
     """Create a new doctor."""
-    return service.create_doctor(db=db, doctor=doctor) 
+    return service.create_doctor(db=db, doctor=doctor)

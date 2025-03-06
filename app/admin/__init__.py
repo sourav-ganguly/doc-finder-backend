@@ -1,1 +1,1 @@
-# Admin module for Doc Finder API 
+# Admin module for Doc Finder API

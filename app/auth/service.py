@@ -47,24 +47,16 @@ def create_user(db: Session, user: schemas.UserCreate):
     try:
         # Check if user with same email already exists
         if get_user_by_email(db, user.email):
-            raise HTTPException(
-                status_code=400,
-                detail="Email already registered"
-            )
+            raise HTTPException(status_code=400, detail="Email already registered")
 
         # Check if user with same username already exists
         if get_user_by_username(db, user.username):
-            raise HTTPException(
-                status_code=400,
-                detail="Username already taken"
-            )
+            raise HTTPException(status_code=400, detail="Username already taken")
 
         # Create new user
         hashed_password = get_password_hash(user.password)
         db_user = models.User(
-            email=user.email,
-            username=user.username,
-            hashed_password=hashed_password
+            email=user.email, username=user.username, hashed_password=hashed_password
         )
         db.add(db_user)
         db.commit()
@@ -72,10 +64,7 @@ def create_user(db: Session, user: schemas.UserCreate):
         return db_user
     except IntegrityError as exc:
         db.rollback()
-        raise HTTPException(
-            status_code=400,
-            detail="User already exists"
-        ) from exc
+        raise HTTPException(status_code=400, detail="User already exists") from exc
 
 
 def authenticate_user(db: Session, email: str, password: str):
