@@ -1,12 +1,10 @@
-import os
-
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
 # Default rate limits
-DEFAULT_RATE_LIMIT = os.getenv("DEFAULT_RATE_LIMIT", "60/minute")
-AUTH_RATE_LIMIT = os.getenv("AUTH_RATE_LIMIT", "10/minute")
-AI_RATE_LIMIT = os.getenv("AI_RATE_LIMIT", "30/minute")
+DEFAULT_RATE_LIMIT = "60/minute"
+AUTH_RATE_LIMIT = "120/minute"
+AI_RATE_LIMIT = "10/minute"
 
 # Initialize limiter with Redis if available
 limiter = Limiter(key_func=get_remote_address)
