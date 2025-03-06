@@ -23,9 +23,6 @@ services:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/doc_finder_db
       ENVIRONMENT: development
       ADMIN_PASSWORD: admintest
-      DEFAULT_RATE_LIMIT: 10/minute
-      AUTH_RATE_LIMIT: 10/minute
-      AI_RATE_LIMIT: 10/minute
 
 volumes:
   postgres_data:

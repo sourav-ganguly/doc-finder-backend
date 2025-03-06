@@ -1,10 +1,9 @@
 from datetime import timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
-from app.config.decorators import auth_rate_limit
 from app.database import get_db
 
 from . import schemas, service
@@ -14,10 +13,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
 @router.post("/register", response_model=schemas.User, status_code=201)
-@auth_rate_limit()
-def register_user(
-    request: Request, user: schemas.UserCreate, db: Session = Depends(get_db)
-):
+def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     """
     Register a new user.
 
@@ -29,11 +25,8 @@ def register_user(
 
 
 @router.post("/login", response_model=schemas.Token)
-@auth_rate_limit()
 def login_for_access_token(
-    request: Request,
-    form_data: OAuth2PasswordRequestForm = Depends(),
-    db: Session = Depends(get_db),
+    form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):
     """
     OAuth2 compatible token login, get an access token for future requests.
