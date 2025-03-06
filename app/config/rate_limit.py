@@ -9,15 +9,17 @@ AUTH_RATE_LIMIT = os.getenv("AUTH_RATE_LIMIT", "10/minute")
 AI_RATE_LIMIT = os.getenv("AI_RATE_LIMIT", "30/minute")
 
 # Initialize limiter with Redis if available
-REDIS_URL = os.getenv("REDIS_URL")
-if REDIS_URL:
-    print("Redis URL found")
-    # from slowapi.storage import RedisStorage
+limiter = Limiter(key_func=get_remote_address)
 
-    # storage = RedisStorage(REDIS_URL)
-    # limiter = Limiter(
-    #     key_func=get_remote_address, storage_uri=REDIS_URL, storage=storage
-    # )
-else:
-    # Use in-memory storage if Redis is not available
-    limiter = Limiter(key_func=get_remote_address)
+# REDIS_URL = os.getenv("REDIS_URL")
+# if REDIS_URL:
+#     print("Redis URL found")
+#     # from slowapi.storage import RedisStorage
+
+#     # storage = RedisStorage(REDIS_URL)
+#     # limiter = Limiter(
+#     #     key_func=get_remote_address, storage_uri=REDIS_URL, storage=storage
+#     # )
+# else:
+#     # Use in-memory storage if Redis is not available
+#     limiter = Limiter(key_func=get_remote_address)
