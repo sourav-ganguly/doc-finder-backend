@@ -26,6 +26,7 @@ services:
       DEFAULT_RATE_LIMIT: 10/minute
       AUTH_RATE_LIMIT: 10/minute
       AI_RATE_LIMIT: 10/minute
+      ADMIN_RATE_LIMIT: 3/minute
 
 volumes:
   postgres_data:

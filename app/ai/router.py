@@ -18,7 +18,7 @@ class SpecializationResponse(BaseModel):
 
 @router.get("/match-specialization", response_model=SpecializationResponse)
 @ai_rate_limit()
-async def get_matching_specialization(request: Request, query: str):
+def get_matching_specialization(request: Request, query: str):
     """
     Match a user's health query to relevant medical specializations.
     """
