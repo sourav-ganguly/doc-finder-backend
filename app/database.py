@@ -13,6 +13,9 @@ if SQLALCHEMY_DATABASE_URL and SQLALCHEMY_DATABASE_URL.startswith("postgres://")
         "postgres://", "postgresql://", 1
     )
 
+if SQLALCHEMY_DATABASE_URL is None:
+    raise ValueError("DATABASE_URL is not set")
+
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

@@ -12,6 +12,7 @@ from .auth.router import router as auth_router
 from .config.decorators import rate_limit
 from .config.rate_limit import limiter
 from .database import Base, engine
+from .debug_test import test_function
 from .doctors.router import router as doctors_router
 
 load_dotenv()
@@ -24,9 +25,8 @@ app = FastAPI(
     version=os.getenv("API_VERSION", "v1"),
 )
 
-# Add rate limiter to the application
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore
 
 app.add_middleware(
     CORSMiddleware,
@@ -46,7 +46,9 @@ app.include_router(auth_router, prefix="/auth", tags=["auth"])
 @rate_limit("10/minute")
 def health_check(request: Request):
     """Health check endpoint"""
-    return {"status": "ok"}
+    value = 42
+    result = test_function(value)
+    return {"status": "ok", "debug_value": result}
 
 
 if __name__ == "__main__":
