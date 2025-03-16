@@ -1,6 +1,6 @@
 from sqlalchemy import ARRAY, Column, DateTime, Integer, String
 
-from ..database import Base
+from app.database import Base
 
 
 class Doctor(Base):

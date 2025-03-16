@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import Base, engine
-from app.doctors import service as doctors_service
+from app.api.doctors import service as doctors_service
 
 
 def verify_admin_password(password: str):

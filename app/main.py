@@ -6,14 +6,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
-from .admin.router import router as admin_router
-from .ai.router import router as ai_router
-from .auth.router import router as auth_router
+from .api.admin.router import router as admin_router
+from .api.ai.router import router as ai_router
+from .api.auth.router import router as auth_router
 from .config.decorators import rate_limit
 from .config.rate_limit import limiter
 from .database import Base, engine
 from .debug_test import test_function
-from .doctors.router import router as doctors_router
+from .api.doctors.router import router as doctors_router
 
 load_dotenv()
 
