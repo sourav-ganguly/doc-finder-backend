@@ -1,0 +1,29 @@
+[tool.ruff]
+# Enable Ruff formatter
+line-length = 88
+indent-width = 4
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+]
+ignore = [
+    "E501",    # line too long (handled by formatter)
+    "B008",    # do not perform function call in argument defaults (common in FastAPI)
+    "PLR0913", # too many arguments to function call
+    "ARG001",  # unused function argument (common with FastAPI dependency injection)
+    "ARG002",  # unused method argument
+    "N805",    # first argument of a method should be named 'self' (conflicts with FastAPI dependency injection)
+    "PLC1901", # compare to empty string
+    "PLW0603", # global statement 
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"

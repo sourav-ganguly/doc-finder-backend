@@ -1,26 +1,33 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 import os
-from dotenv import load_dotenv
 
-from .doctors.router import router as doctors_router
-from .ai.router import router as ai_router
-from .admin.router import router as admin_router
-from .doctors.models import Base
-from .database import engine
+from dotenv import load_dotenv
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+
+from .api.admin.router import router as admin_router
+from .api.ai.router import router as ai_router
+from .api.auth.router import router as auth_router
+from .config.decorators import rate_limit
+from .config.rate_limit import limiter
+from .database import Base, engine
+from .debug_test import test_function
+from .api.doctors.router import router as doctors_router
 
 load_dotenv()
 
-# Create database tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Doc Finder API",
     description="Backend API for Doc Finder Mobile App",
-    version=os.getenv("API_VERSION", "v1")
+    version=os.getenv("API_VERSION", "v1"),
 )
 
-# Add CORS middleware
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -29,17 +36,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers
 app.include_router(doctors_router, prefix="/doctors", tags=["doctors"])
 app.include_router(ai_router, prefix="/ai", tags=["ai"])
 app.include_router(admin_router, prefix="/admin", tags=["admin"])
+app.include_router(auth_router, prefix="/auth", tags=["auth"])
+
 
 @app.get("/health")
-def health_check():
+@rate_limit("10/minute")
+def health_check(request: Request):
     """Health check endpoint"""
-    return {"status": "healthy"}
+    value = 42
+    result = test_function(value)
+    return {"status": "ok", "debug_value": result}
+
 
 if __name__ == "__main__":
     import uvicorn
+
     port = int(os.getenv("PORT", 8000))
-    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True) 
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)

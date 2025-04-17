@@ -1,6 +1,8 @@
-from pydantic import BaseModel
-from typing import Optional, List
 from datetime import date
+from typing import List, Optional
+
+from pydantic import BaseModel
+
 
 class DoctorBase(BaseModel):
     name: str
@@ -14,11 +16,13 @@ class DoctorBase(BaseModel):
     clinics: Optional[List[str]] = []
     chambers: Optional[List[str]] = []
 
+
 class DoctorCreate(DoctorBase):
     pass
+
 
 class Doctor(DoctorBase):
     id: int
 
     class Config:
-        from_attributes = True 
+        from_attributes = True

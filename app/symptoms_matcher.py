@@ -1,7 +1,8 @@
-import os
-import openai
 import logging
+import os
 from difflib import get_close_matches
+
+import openai
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -77,18 +78,22 @@ speciality_list = [
     "Reconstructive & Cosmetic Surgery",
     "Respiratory Medicine",
     "Rheumatology",
-    "Urology"
+    "Urology",
 ]
+
 
 def find_closest_specialty(specialty):
     """
     Find the closest matching specialty from our predefined list
     """
-    matches = get_close_matches(specialty.lower(), [s.lower() for s in speciality_list], n=1, cutoff=0.6)
+    matches = get_close_matches(
+        specialty.lower(), [s.lower() for s in speciality_list], n=1, cutoff=0.6
+    )
     if matches:
         # Return the original casing from speciality_list
         return next(s for s in speciality_list if s.lower() == matches[0])
     return None
+
 
 def match_specialization(symptoms):
     """
@@ -108,19 +113,23 @@ def match_specialization(symptoms):
         If multiple specializations are equally relevant, list them in order of priority, separated by semicolons.
         Do not include any explanations or additional text. Only use specializations from the provided list."""
 
-        
         response = openai.ChatCompletion.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "You are a medical expert assistant that recommends appropriate medical specializations based on symptoms."},
-                {"role": "user", "content": prompt}
+                {
+                    "role": "system",
+                    "content": "You are a medical expert assistant that recommends appropriate medical specializations based on symptoms.",
+                },
+                {"role": "user", "content": prompt},
             ],
             temperature=0.7,
-            max_tokens=100
+            max_tokens=100,
         )
 
-        suggested_specialties = response.choices[0].message['content'].strip().split(';')
-        
+        suggested_specialties = (
+            response.choices[0].message["content"].strip().split(";")
+        )
+
         validated_specialties = []
         for specialty in suggested_specialties:
             specialty = specialty.strip()
@@ -130,13 +139,13 @@ def match_specialization(symptoms):
                 closest_match = find_closest_specialty(specialty)
                 if closest_match:
                     validated_specialties.append(closest_match)
-        
+
         logger.debug(f"Validated specialties: {validated_specialties}")
-        
+
         if not validated_specialties:
             logger.debug("No valid specialties found, returning Internal Medicine")
             return "Internal Medicine"
-            
+
         return ";".join(validated_specialties)
 
     except Exception as e:

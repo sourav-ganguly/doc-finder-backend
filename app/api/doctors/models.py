@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Integer, String, DateTime, ARRAY
-from sqlalchemy.sql import func
-from ..database import Base
+from sqlalchemy import ARRAY, Column, DateTime, Integer, String
+
+from app.database import Base
 
 
 class Doctor(Base):
@@ -17,4 +17,4 @@ class Doctor(Base):
     data_scrapped_at = Column(DateTime)
     data_source = Column(String)
     clinics = Column(ARRAY(String))
-    chambers = Column(ARRAY(String)) 
+    chambers = Column(ARRAY(String))
