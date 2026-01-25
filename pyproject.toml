@@ -1,24 +1,28 @@
-[project]
+[tool.poetry]
 name = "doc-finder-backend"
 version = "0.1.0"
 description = "Backend for Doc Finder."
-requires-python = ">=3.10"
-dependencies = [
-    "fastapi==0.109.2",
-    "uvicorn==0.27.1",
-    "sqlalchemy==2.0.27",
-    "psycopg2-binary==2.9.9",
-    "python-dotenv==1.0.1",
-    "pydantic==2.6.1",
-    "alembic==1.13.1",
-    "openai==0.28.1",
-    "python-jose[cryptography]==3.3.0",
-    "passlib[bcrypt]==1.7.4",
-    "python-multipart==0.0.6",
-    "email-validator==2.1.0",
-    "ruff==0.9.9",
-    "slowapi==0.1.8",
-]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<4.0"
+fastapi = "0.109.2"
+uvicorn = "0.27.1"
+sqlalchemy = "2.0.27"
+psycopg2-binary = "2.9.9"
+python-dotenv = "1.0.1"
+pydantic = "2.6.1"
+alembic = "1.13.1"
+openai = "0.28.1"
+python-jose = { extras = ["cryptography"], version = "3.3.0" }
+passlib = { extras = ["bcrypt"], version = "1.7.4" }
+python-multipart = "0.0.6"
+email-validator = "2.1.0"
+ruff = "0.9.9"
+slowapi = { version = "0.1.8", python = ">=3.10,<4.0" }
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
 # Enable Ruff formatter
