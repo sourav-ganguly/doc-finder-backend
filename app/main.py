@@ -9,6 +9,7 @@ from slowapi.errors import RateLimitExceeded
 from .api.admin.router import router as admin_router
 from .api.ai.router import router as ai_router
 from .api.auth.router import router as auth_router
+from .api.cron.router import router as cron_router
 from .config.decorators import rate_limit
 from .config.rate_limit import limiter
 from .database import Base, engine
@@ -40,6 +41,7 @@ app.include_router(doctors_router, prefix="/doctors", tags=["doctors"])
 app.include_router(ai_router, prefix="/ai", tags=["ai"])
 app.include_router(admin_router, prefix="/admin", tags=["admin"])
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
+app.include_router(cron_router, prefix="/api/cron", tags=["cron"])
 
 
 @app.get("/health")
