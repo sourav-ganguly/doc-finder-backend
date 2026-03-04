@@ -1,4 +1,5 @@
 {
+    "audioCues.enabled": "off",
     // Ruff configuration
     "[python]": {
         "editor.defaultFormatter": "charliermarsh.ruff",
@@ -13,5 +14,9 @@
     "ruff.trace.server": "verbose",
     "ruff.format.args": [
         "--verbose"
-    ]
+    ],
+    "accessibility.signals.terminalBell": "off",
+    "terminal.integrated.enableBell": false,
+    "terminal.integrated.bellDuration": 0,
+    "terminal.integrated.enableVisualBell": false
 }
