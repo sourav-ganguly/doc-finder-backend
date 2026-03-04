@@ -13,7 +13,6 @@ from .api.cron.router import router as cron_router
 from .config.decorators import rate_limit
 from .config.rate_limit import limiter
 from .database import Base, engine
-from .debug_test import test_function
 from .api.doctors.router import router as doctors_router
 
 load_dotenv()
@@ -48,9 +47,7 @@ app.include_router(cron_router, prefix="/api/cron", tags=["cron"])
 @rate_limit("10/minute")
 def health_check(request: Request):
     """Health check endpoint"""
-    value = 42
-    result = test_function(value)
-    return {"status": "ok", "debug_value": result}
+    return {"status": "ok"}
 
 
 if __name__ == "__main__":
