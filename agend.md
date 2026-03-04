@@ -22,3 +22,8 @@ Server URL:
 ```bash
 curl http://127.0.0.1:8000/health
 ```
+
+## 5) Run tests
+```bash
+uv run pytest -v
+```
