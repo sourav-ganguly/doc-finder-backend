@@ -15,8 +15,20 @@
     "ruff.format.args": [
         "--verbose"
     ],
-    "accessibility.signals.terminalBell": "off",
-    "terminal.integrated.enableBell": false,
+    "python.defaultInterpreterPath": ".venv/bin/python",
+    "python.testing.unittestEnabled": true,
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "tests",
+        "-p",
+        "test_*.py"
+    ],
+    "python.testing.autoTestDiscoverOnSaveEnabled": true,
+    "accessibility.signals.terminalBell": {
+        "sound": "off"
+    },
     "terminal.integrated.bellDuration": 0,
     "terminal.integrated.enableVisualBell": false
 }
