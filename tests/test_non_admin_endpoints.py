@@ -5,7 +5,6 @@ from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
-
 os.environ.setdefault("DATABASE_URL", "sqlite:///./test_api.db")
 
 from app import database as app_database

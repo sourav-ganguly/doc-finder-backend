@@ -32,12 +32,13 @@ def test_get_doctors_without_search(client_and_db):
     client, db = client_and_db
     doctors = [{"id": 1, "name": "Dr. A", "speciality": "Cardiology"}]
 
-    with patch(
-        "app.api.doctors.router.service.get_doctors",
-        return_value=doctors,
-    ) as get_doctors_mock, patch(
-        "app.api.doctors.router.match_specialization"
-    ) as match_mock:
+    with (
+        patch(
+            "app.api.doctors.router.service.get_doctors",
+            return_value=doctors,
+        ) as get_doctors_mock,
+        patch("app.api.doctors.router.match_specialization") as match_mock,
+    ):
         response = client.get("/doctors/", params={"skip": 2, "limit": 5})
 
     assert response.status_code == 200
@@ -65,13 +66,16 @@ def test_get_doctors_without_search(client_and_db):
 def test_get_doctors_with_search_maps_specializations(client_and_db):
     client, db = client_and_db
 
-    with patch(
-        "app.api.doctors.router.service.get_doctors",
-        return_value=[],
-    ) as get_doctors_mock, patch(
-        "app.api.doctors.router.match_specialization",
-        return_value="Cardiology; Neurology",
-    ) as match_mock:
+    with (
+        patch(
+            "app.api.doctors.router.service.get_doctors",
+            return_value=[],
+        ) as get_doctors_mock,
+        patch(
+            "app.api.doctors.router.match_specialization",
+            return_value="Cardiology; Neurology",
+        ) as match_mock,
+    ):
         response = client.get("/doctors/", params={"search": "headache"})
 
     assert response.status_code == 200
