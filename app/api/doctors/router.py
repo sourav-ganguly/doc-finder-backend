@@ -5,8 +5,9 @@ from sqlalchemy.orm import Session
 
 from app.config.decorators import doctor_rate_limit
 from app.database import get_db
-from . import schemas, service
 from app.symptoms_matcher import match_specialization
+
+from . import schemas, service
 
 router = APIRouter()
 

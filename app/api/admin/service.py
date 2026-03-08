@@ -3,8 +3,8 @@ import os
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from app.database import Base, engine
 from app.api.doctors import service as doctors_service
+from app.database import Base, engine
 
 
 def verify_admin_password(password: str):
