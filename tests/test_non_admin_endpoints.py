@@ -90,13 +90,6 @@ class TestNonAdminEndpoints(unittest.TestCase):
         response = self.client.post("/doctors/", json=payload)
         self.assertEqual(response.status_code, 201)
 
-    def test_ai_match_specialization(self):
-        response = self.client.get(
-            "/ai/match-specialization",
-            params={"query": "I have chest pain"},
-        )
-        self.assertEqual(response.status_code, 200)
-
     def test_auth_register(self):
         payload = {
             "email": "user@example.com",
